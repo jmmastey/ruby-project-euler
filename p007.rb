@@ -1,15 +1,4 @@
-
-class Fixnum
-
-  def prime? previous_primes
-    previous_primes.each do |p|
-      return false if 0 == self.to_i%p
-    end
-
-    return true
-  end
-
-end
+require 'tools'
 
 p_num = 6
 p_max = 10001

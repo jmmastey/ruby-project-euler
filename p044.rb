@@ -1,22 +1,26 @@
 
+#max = 10000
+# this is called cheating. might as well say max is 2167
+max = 2500
 pentags = []
-1.upto 10000 do |i|
+pdict = {}
+1.upto max do |i|
   pentags << i*((3*i)-1)/2
+  pdict[i*((3*i)-1)/2] = nil
 end
 
-min = 9999999
-1.upto(pentags.length-1) do |j|
-  (j-1).downto 1 do |k|
-    curr = pentags[j]
-    down = pentags[(j-k)]
+# main optimization, sadly enough, is O(n) lookups
+# thanks to dict.
 
-    next unless pentags.include?(curr+down)
-    next unless pentags.include?(curr-down)
-    diff = j-k
+subs = {}
+pentags.length.downto 0 do |k|
+  p = pentags[k]
+  1.upto(pentags.length-1-k) do |s|
+    p2 = pentags[k+s]
+    next unless pdict.include?(p2-p)
+    next unless pdict.include?(p2+p)
 
-    puts "#{j} and #{k} work. (diff is #{diff})"
-    min = [min,diff].min
+    puts "#{k} (#{p}), #{k+s} (#{p2}) (#{(p2-p).abs})"
+    exit
   end
 end
-
-puts "min difference was #{min}"

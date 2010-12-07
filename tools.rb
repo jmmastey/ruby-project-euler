@@ -52,6 +52,38 @@ class Fixnum
 
     f
   end
+
+  @@prime_factors = {}
+
+  def prime_factors(primes = nil)
+    return {self => 1} if self.prime?
+    return @@prime_factors[self] if @@prime_factors.include? self
+
+    primes = Sieve.get_primes_to self**0.5 unless primes
+    target = self
+    facts = {}
+    k = 0
+    while true
+      break if target == 1
+
+      pr = primes[k]
+      if pr > target
+        k += 1
+        next
+      end
+
+      if 0 == target%pr
+        facts[pr] ||= 0
+        facts[pr] += 1
+        target = target/pr
+        next
+      end
+
+      k += 1
+    end
+
+    (@@prime_factors[self] = facts)
+  end
 end
 
 class Array
@@ -67,6 +99,14 @@ class Array
 
     return if (i1.nil? or i2.nil?)
     self[i1], self[i2] = self[i2], self[i1]
+  end
+
+  def tohashkeys
+    h = {}
+    self.each do |k|
+      h[k] = nil
+    end
+    h
   end
 end
 

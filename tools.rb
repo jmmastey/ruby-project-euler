@@ -1,5 +1,21 @@
 
 class Fixnum
+
+  @@factorials = {}
+
+  def factorial
+    if !@@factorials.include? self
+      total = 1
+      return total unless self > 1
+      self.downto 1 do |r|
+        total *= r
+      end
+      @@factorials[self] = total
+    end
+
+    return @@factorials[self]
+  end
+
   def prime?(primes = nil)
     return self.prime_by_trial?(primes = nil) if self > 100000000
     return ('1' * self.to_i) !~ /^1?$|^(11+?)\1+$/ if primes.nil?
@@ -110,11 +126,23 @@ class Array
   end
 end
 
+class Hash
+  def value_ct val
+    ct = 0
+    self.each { |k,v| ct += 1 if v == val }
+    ct
+  end
+end
+
 class MathUtils
   def self.coprime?(i1,i2)
     f1 = i1.to_i.factors
     f2 = i2.to_i.factors
     (f1 & f2).length > 0
+  end
+
+  def self.combination(n, r)
+    n.factorial/(r.factorial*(n-r).factorial)
   end
 end
 

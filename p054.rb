@@ -6,36 +6,40 @@ def score_hand cards
 
 
   # royal flush
-  return 10e100 if (flush?(cards) && [10,11,12,13,14] == scores)
+  return 6e11 if (flush?(cards) && [10,11,12,13,14] == scores)
 
   # straight flush
-  return 10e90 * scores.max if (flush?(cards) && straight?(scores))
+  return 4e11 + (1e10 * scores.max) if (flush?(cards) && straight?(scores))
 
   # 4oak
-  return 10e80 * scores.max if (grouped.value? 4)
+  return 3e11 + (1e9 * value_for_ct(grouped,4)) + score_all_cards(grouped,1) if grouped.value? 4
 
   # full house
   if grouped.value?(3) && grouped.value?(2)
-    return 10e70 * ((10*value_for_ct(grouped,3))+value_for_ct(grouped,2))
+    return 1e11 + (1e10*value_for_ct(grouped,3)) + (1e8*value_for_ct(grouped,2)) + score_all_cards(grouped)
   end
 
   # flush
-  return 10e60 * scores.max if flush?(cards)
+  return 9e10 + score_all_cards(grouped) if flush?(cards)
 
   # straight
-  return 10e50 * scores.max if straight?(scores)
+  return 7e10 + (1e9 * scores.max) if straight?(scores)
 
   # 3oak
-  return 10e40 * scores.max if grouped.value?(3)
+  return 4e10 + (1e9 * scores.max) + (1e2 * score_all_cards(grouped,2)) + score_all_cards(grouped,1) if grouped.value?(3)
 
   # 2 pair
-  return 10e30 if grouped.value_ct(2) == 2
+  if grouped.value_ct(2) == 2
+    twos = (grouped.select { |k,v| v == 2 }).sort.reverse
+    tscore = twos.inject(0) { |sum,s| sum += s[0]; sum *= 100; sum }
+    return 1e10 + (tscore * 1e5) + score_all_cards(grouped,1)
+  end
 
   # pair
-  return (10e20 * value_for_ct(grouped,2) + score_all_cards(grouped)) if grouped.value?(2)
+  return 6e9 + (1e7 * value_for_ct(grouped,2)) + score_all_cards(grouped,1) if grouped.value?(2)
 
   # nothing
-  return 10e10 + score_all_cards(grouped)
+  return 1e9 + score_all_cards(grouped)
 end
 
 def flush? cards
@@ -75,11 +79,16 @@ def score_card face
   end
 end
 
-def score_all_cards hand
+def score_all_cards(hand, maxct = 5)
   scale = 8
   points = 0
   hand.to_a.sort.reverse.each do |v,i|
-    points += i * v * 10**scale
+    if i > maxct
+      scale -= 2
+      next
+    end
+
+    points += i * v * 5**scale
     scale -= 2
   end
 
@@ -90,28 +99,62 @@ def value_for_ct h, ct
   (h.inject([]) { |a,s| a << score_card(s[0]) if s[1] == ct; a }).max
 end
 
-
-
-
-
-
-
-hands = File.read("p054_poker.txt").split(/\r\n/)
-p1wins = 0
-
+=begin
 hands = [
-  #["TH", "JH", "QH", "KH", "AH"],
-  #["TH", "JH", "QH", "KH", "9H"],
-  #["9D", "9S", "9C", "KH", "9H"],
-  ["2D", "3S", "8C", "6H", "8H"],
-  ["2D", "3S", "4C", "8H", "8H"],
+  ["2D", "3S", "4C", "7H", "5H"],
+  ["2D", "3S", "4C", "8H", "5H"],
+  ["AD", "KS", "QC", "JH", "8H"],
+  ["AD", "KS", "QC", "JH", "9H"],
+  ["2D", "2S", "3C", "4H", "5H"],
+  ["2D", "2S", "3C", "4H", "6H"],
+  ["AD", "AS", "KC", "QH", "TH"],
+  ["AD", "AS", "KC", "QH", "JH"],
+  ["2D", "2S", "3C", "3H", "4H"],
+  ["2D", "2S", "3C", "3H", "5H"],
+  ["AD", "AS", "KC", "KH", "JH"],
+  ["AD", "AS", "KC", "KH", "QH"],
+  ["2D", "2S", "2C", "3H", "4H"],
+  ["2D", "2S", "2C", "3H", "5H"],
+  ["3D", "3S", "3C", "4H", "5H"],
+  ["AD", "AS", "AC", "KH", "JH"],
+  ["AD", "AS", "AC", "KH", "QH"],
+  ["2D", "3S", "4C", "5H", "6H"],
+  ["7D", "3S", "4C", "5H", "6H"],
+  ["KS", "QC", "JH", "TH", "9S"],
+  ["AD", "KS", "QC", "JH", "TH"],
+  ["2H", "2H", "2H", "3H", "4H"],
+  ["2H", "2H", "2H", "3H", "5H"],
+  ["AH", "AH", "AH", "KH", "JH"],
+  ["AH", "AH", "AH", "KH", "QH"],
+  ["2H", "2H", "2H", "3H", "3H"],
+  ["2H", "2H", "2H", "4H", "4H"],
+  ["AH", "AH", "AH", "QH", "QH"],
+  ["AH", "AH", "AH", "KH", "KH"],
+  ["2H", "2H", "2H", "2H", "3H"],
+  ["2H", "2H", "2H", "2H", "4H"],
+  ["3H", "3H", "3H", "3H", "2H"],
+  ["AH", "AH", "AH", "AH", "QH"],
+  ["AH", "AH", "AH", "AH", "KH"],
+  ["2H", "3H", "4H", "5H", "6H"],
+  ["3H", "4H", "5H", "6H", "7H"],
+  ["QH", "JH", "TH", "9H", "8H"],
+  ["KH", "QH", "JH", "TH", "9H"],
+  ["TH", "JH", "QH", "KH", "AH"],
 ]
 hands.each { |h| p score_hand h }
 exit
+=end
+
+
+hands = File.read("p054_poker.txt").split(/\r\n/)
+p1wins = []
 
 hands.each do |hand|
   cards = hand.split
   p1, p2 = cards[0..4], cards[5..9]
 
-  p1wins += 1 if score_hand(p1) > score_hand(p2)
+  p1wins << [p1,p2] if score_hand(p1) > score_hand(p2)
 end
+
+#p1wins[0..10].each { |v| p v }
+p p1wins.length

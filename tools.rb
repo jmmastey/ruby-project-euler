@@ -124,6 +124,14 @@ class Array
     end
     h
   end
+
+  def sum
+    self.inject(0) { |sum,i| sum += i; sum }
+  end
+
+  def product
+    self.inject(1) { |prod,i| prod *= i; prod }
+  end
 end
 
 class Hash
@@ -131,6 +139,14 @@ class Hash
     ct = 0
     self.each { |k,v| ct += 1 if v == val }
     ct
+  end
+
+  def sum
+    self.values.sum
+  end
+
+  def product
+    self.values.product
   end
 end
 

@@ -1,6 +1,5 @@
 
 class Fixnum
-
   @@factorials = {}
 
   def factorial
@@ -103,12 +102,20 @@ class Fixnum
 end
 
 class Array
+
+  # cast each member to an integer
+  def to_is
+    self.each_index { |i| self[i] = self[i].to_i }
+  end
+
+  # is this sorted in reverse?
   def rsorted?
     return true if 1 == self.length
     return self[0] >= self[1] if 2 == self.length
     self == self.sort.reverse
   end
 
+  # swap two values in the array
   def swap!(val1, val2)
     i1 = self.index val1
     i2 = self.index val2
@@ -117,6 +124,7 @@ class Array
     self[i1], self[i2] = self[i2], self[i1]
   end
 
+  # get all values as hashkeys (for O(1) lookup)
   def tohashkeys
     h = {}
     self.each do |k|
@@ -125,10 +133,12 @@ class Array
     h
   end
 
+  # get sum of all elems
   def sum
     self.inject(0) { |sum,i| sum += i; sum }
   end
 
+  # get product of all elems
   def product
     self.inject(1) { |prod,i| prod *= i; prod }
   end

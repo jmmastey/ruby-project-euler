@@ -142,6 +142,32 @@ class Array
   def product
     self.inject(1) { |prod,i| prod *= i; prod }
   end
+
+  # discrete math xPn for x == self.length
+  # don't do this for really big arrays...
+  # also, these are order-conscious
+  def permutations_for n
+    return [] unless n > 0
+    return self if n == 1
+    n == self.length if n > self.length
+
+    self.inject([]) { |perm,i| perm + _perm(n-1,[i], self-[i]) }
+  end
+
+  def _perm(n, start, rem)
+    return rem.inject([]) { |perm,i| perm << (start+[i]) && perm } if n == 1
+    return rem.inject([]) { |perm,i| perm + _perm(n-1,(start+[i]),rem-[i]) }
+  end
+
+  def collapse
+    out = []
+    self.each do |v|
+      v = [v] unless v.class == Array
+      out += v
+    end
+
+    out
+  end
 end
 
 class Hash

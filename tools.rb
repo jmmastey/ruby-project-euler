@@ -99,6 +99,19 @@ class Fixnum
 
     (@@prime_factors[self] = facts)
   end
+
+  # find the number of integers < n that are 
+  # coprime to n
+  def phi(primes = nil)
+    return self - 1 if self.prime?
+    return 1 if self == 1
+
+    primes = Sieve.get_primes_to(self**0.5) unless primes
+    pf = self.prime_factors(primes)
+    return pf.inject(1) do |prod, pair|
+      prod *= (pair[0]-1)*pair[0]**(pair[1]-1)
+    end
+  end
 end
 
 class Array
@@ -159,6 +172,24 @@ class Array
     return rem.inject([]) { |perm,i| perm + _perm(n-1,(start+[i]),rem-[i]) }
   end
 
+  # discrete math xCn for x == self.length
+  # assumes that the array is sorted
+  # not conscious of order in results
+  def combinations_for n
+    return [] if n > self.length || self.length == 0 || n == 0
+    return [self] if n == self.length
+    return self.inject([]) { |sum,i| sum << [i] } if n == 1
+
+    combos = []
+    0.upto((self.length-(n-1))-1) do |idx|
+      self[idx+1..-1].combinations_for(n-1).each do |arr|
+        combos << (arr << self[idx])
+      end
+    end
+
+    combos
+  end
+
   def collapse
     out = []
     self.each do |v|
@@ -183,6 +214,10 @@ class Hash
 
   def product
     self.values.product
+  end
+
+  def addkeys(arr, default = nil)
+    arr.each { |v| self[v] = default }
   end
 end
 
@@ -215,6 +250,71 @@ class Sieve
     end
 
     series.compact
+  end
+
+  def self.phi_to(max, primes = nil)
+    primes = self.get_primes_to(max/2) unless primes
+    ret = { 1 => 1 }
+
+    2.upto max do |i|
+      next if ret.include? i
+      p i if 0 == i % 1000
+
+      # phi of a prime i is i-1
+      if i.prime?
+        ret[i] = i-1
+
+      # general case, take prime factors
+      else
+        pf = i.prime_factors(primes)
+        ret[i] = pf.inject(1) do |prod, pair|
+          prod *= (pair[0]-1)*pair[0]**(pair[1]-1)
+        end
+      end
+
+      # power of prime, p**a - p**(a-1)
+      pow = 2
+      ipow = i**pow
+      while ipow < max
+        ret[ipow] = ipow*(1-(1/i))
+        pow += 1
+        ipow = i**pow
+      end
+    end
+
+    ret
+  end
+
+  def self.clever_phi_to max
+    phi = { 0 => 0, 1 => 1 }
+    nonce = { 0 => nil, 1 => nil }
+
+    2.upto max do |i|
+      next if nonce.include? i
+
+      phi[i] = i-1
+      2.upto(max/i) do |j|
+        ij = i*j
+        nonce[ij] = nil
+
+        phi[ij] ||= ij
+        phi[ij] = phi[ij]/i*(i-1)
+      end
+    end
+
+    phi
+  end
+
+  def self.quick_primes_to_1m
+    primes = []
+    File.open("primes_to_1m.txt") do |file|
+      while line = file.gets
+        line.chomp.split.each do |s|
+          primes << s.to_i
+        end
+      end
+    end
+    primes
   end
 end
 

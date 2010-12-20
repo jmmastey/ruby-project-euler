@@ -1,35 +1,82 @@
 require 'tools'
 
-lim  = 1000
-primes = Sieve.get_primes_to lim
-lookup = primes.tohashkeys
-max = (primes.max.to_s * 2).to_i
-divlist = (2..max)
-
-sols = {}
-primes.each do |pr1|
-  friends = [pr1]
-  pr1s = pr1.to_s
-
-  primes.each do |pr2|
-    ab = (pr1s + pr2.to_s).to_i
-    ba = (pr2.to_s+pr1s).to_i
-    friend = true
-
-    unless lookup.include?(ab) || ab.prime_by_trial?(divlist)
-      friend = false
-    end
-    unless lookup.include?(ba) || ba.prime_by_trial?(divlist)
-      friend = false
-    end
-
-    next unless friend
-    friends << pr2
-    lookup[ab] = nil
-    lookup[ba] = nil
-  end
-
-  sols[pr1] = friends.sort if friends.length >= 4
+def friendly?(str1, str2)
+  (str1 + str2).to_i.prime? and (str2 + str1).to_i.prime?
 end
 
-p sols
+lim  = 1000
+primes = Sieve.get_primes_to lim
+
+sols = {}
+primes.each do |pr|
+  prs = pr.to_s
+  next if sols.include? prs
+
+  0.upto primes.length do |i|
+    cpr = primes[i].to_s
+
+    if friendly?(cpr, prs)
+      sols[prs] = [cpr]
+      sols[cpr] = [prs]
+      break
+    end
+  end
+end
+
+# now we have a list of candidate "friendly" primes, for 
+# which we can check all other friendly primes for matches.
+
+sols.delete ""
+
+# abandon all hope
+solkeys = sols.keys
+p solkeys.length
+p primes.length
+exit
+
+sols.each do |prs,keys|
+  solkeys.each do |cpr|
+    next if cpr == keys[0]
+
+    if friendly?(cpr, prs)
+      keys << cpr
+    end
+  end
+
+  keys << prs
+  sols.delete prs if keys.length < 5
+end
+
+sols.each do |whocares,set|
+  puts "trying #{set.join ','}"
+
+  set = set.sort
+  combos = set.combinations_for 5
+  0.upto combos.length-1 do |idx|
+    candidate = combos[idx]
+    next if candidate.nil?
+
+    valid = true
+    candidate.combinations_for(2).each do |pair|
+      next if friendly?(pair[0], pair[1])
+
+      # invalidate other combos that contain this pair
+      idx.upto combos.length-1 do |future_idx|
+        next if combos[future_idx].nil?
+
+        intersect = combos[future_idx] & pair
+        next unless intersect && 2 == intersect.length
+        combos[future_idx] = nil
+      end
+
+      valid = false
+      break
+    end
+
+    next unless valid
+
+    # found it
+    p candidate
+    exit
+  end
+end

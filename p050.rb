@@ -1,29 +1,33 @@
 
 require 'tools'
 
-def prime_sum(target, st, primes)
-  n = st
-  while target > 0
-    target -= primes[n]
-    n += 1
-  end
-
-  return 0 if target != 0
-  return (n-st)
-end
-
 primes = Sieve.get_primes_to 1000000
-max = 0
-maxkey = []
-(primes.length-1).downto 0 do |k|
-  pr = primes[k]
-  0.upto k do |j|
-    ct = prime_sum(pr, j, primes)
-    if ct > max
-      max = ct
-      maxkey = { :prime => pr, :start => primes[j], :length => ct}
+keys = primes.tohashkeys
+
+max = 500
+mlen = primes.length
+mlen.downto max do |slen|
+  break if slen <= max
+
+  # 0..max, 1..max, 2..max
+  sum = primes[(mlen-slen)..(mlen-1)].sum
+  len = slen
+
+  # only iterate as far as makes sense
+  found = false
+  (slen-1).downto max+1 do |i|
+    break if found
+
+    slen -= 1
+    sum -= primes[i]
+
+    next if sum > 1e6
+    break if sum < 1e5
+    if sum.prime?(keys)
+      puts "#{sum} (#{slen})"
+      max = [max,slen].max
+      found = true
+      break
     end
   end
 end
-
-p maxkey

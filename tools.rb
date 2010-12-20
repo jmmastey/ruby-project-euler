@@ -16,7 +16,7 @@ class Fixnum
   end
 
   def prime?(primes = nil)
-    return self.prime_by_trial?(primes = nil) if self > 100000000
+    return self.prime_by_trial?(primes = nil) if self > 10000000
     return ('1' * self.to_i) !~ /^1?$|^(11+?)\1+$/ if primes.nil?
     return primes.include? self
   end
@@ -305,9 +305,23 @@ class Sieve
     phi
   end
 
-  def self.quick_primes_to_1m
+  def self.quick_primes_to_1m(ashash = false)
+    self.primelist("primes_to_1m.txt", ashash)
+  end
+
+  def self.quick_primes_to_15m(ashash = false)
+    self.primelist("primes_to_15m.txt", ashash)
+  end
+
+  def self.quick_primes_to_100m(ashash = false)
+    self.primelist("primes_to_100m.txt", ashash)
+  end
+
+  protected
+  def self.primelist(file, hash)
+    return self.primelisthash(file) if hash
     primes = []
-    File.open("primes_to_1m.txt") do |file|
+    File.open(file) do |file|
       while line = file.gets
         line.chomp.split.each do |s|
           primes << s.to_i
@@ -316,6 +330,19 @@ class Sieve
     end
     primes
   end
+
+  def self.primelisthash(file)
+    primes = {}
+    File.open(file) do |file|
+      while line = file.gets
+        line.chomp.split.each do |s|
+          primes[s.to_i] = nil
+        end
+      end
+    end
+    primes
+  end
+
 end
 
 class Permuter

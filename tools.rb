@@ -80,6 +80,7 @@ class Fixnum
     k = 0
     while true
       break if target == 1
+      break if k >= primes.length
 
       pr = primes[k]
       if pr > target
@@ -305,6 +306,14 @@ class Sieve
     phi
   end
 
+  def self.quick_phi_to_1m
+    self.philist("phi_to_1m.txt")
+  end
+
+  def self.quick_phi_to_10m
+    self.philist("phi_to_10m.txt")
+  end
+
   def self.quick_primes_to_1m(ashash = false)
     self.primelist("primes_to_1m.txt", ashash)
   end
@@ -343,6 +352,16 @@ class Sieve
     primes
   end
 
+  def self.philist(file)
+    phi = {}
+    File.open(file) do |file|
+      while line = file.gets
+        n, pn = line.chomp.split(':')
+        phi[n.to_i] = pn.to_i
+      end
+    end
+    phi
+  end
 end
 
 class Permuter

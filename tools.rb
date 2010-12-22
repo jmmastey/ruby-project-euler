@@ -232,6 +232,30 @@ class MathUtils
   def self.combination(n, r)
     n.factorial/(r.factorial*(n-r).factorial)
   end
+
+  def self.triangle n
+    n*(n+1)/2
+  end
+
+  def self.square n
+    n**2
+  end
+
+  def self.pentagon n
+    n*(3*n-1)/2
+  end
+
+  def self.hexagon n
+    n*(2*n-1)
+  end
+
+  def self.heptagon n
+    n*(5*n-3)/2
+  end
+
+  def self.octagon n
+    n*(3*n-2)
+  end
 end
 
 class Sieve

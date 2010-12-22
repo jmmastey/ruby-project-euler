@@ -418,3 +418,18 @@ class Permuter
     self.to_s.to_i
   end
 end
+
+class Rational
+  def reciprocal
+    return 0 unless self.nonzero?
+    self.denominator/self.numerator
+  end
+
+  def fractional_part
+    self.remainder(1)
+  end
+
+  def whole_part
+    self.floor
+  end
+end

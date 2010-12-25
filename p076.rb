@@ -1,28 +1,32 @@
 
-def parts(num,cache)
-  return cache[num] if cache.include? num
-
-  sum = 0
-  pairs = []
-  1.upto(num-1) do |i|
-    pair = [num-i,i].sort
-    if pairs.include? pair
-      sum += 1
-      p "sum is #{sum}"
-      next
-    end
-
-    pairs << pair
-    sum += parts((num-1-i),cache)
-    p "sum is now #{sum}"
+def parts n
+  if @cache.include? n
+    p "cache hit #{n}"
+    return @cache[n]
   end
 
-  (cache[num] = sum)
+  c = [[n]]
+  1.upto n-1 do |i|
+    cs = parts(n-i)
+    cs.each do |cmb|
+      c << (cmb + [i])
+    end
+  end
+
+  (@cache[n] = c)
 end
 
+@cache = { 1 => [[1]] }
+@ans = {}
 
-cache = { 1 => 1, 0 => 1 }
-2.upto 5 do |i|
-  p = parts(i, cache)
-  puts "#{i} has #{p}"
+st = 50
+1.upto st-1 do |n|
+  p n
+  c = parts n
+  c.each do |l|
+    exp = ((l + [n]).sort.join ",")
+    @ans[exp] = nil
+  end
 end
+
+p @ans.length

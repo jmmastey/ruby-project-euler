@@ -113,6 +113,14 @@ class Fixnum
       prod *= (pair[0]-1)*pair[0]**(pair[1]-1)
     end
   end
+
+  def root(pow)
+    self**(1.0/pow)
+  end
+
+  def gcd(b)
+    MathUtils.gcd(self,b)
+  end
 end
 
 class Array
@@ -256,6 +264,10 @@ class MathUtils
   def self.octagon n
     n*(3*n-2)
   end
+
+  def self.gcd(a,b)
+    a%b==0? b : gcd(b,a%b)
+  end
 end
 
 class Sieve
@@ -348,6 +360,21 @@ class Sieve
 
   def self.quick_primes_to_100m(ashash = false)
     self.primelist("primes_to_100m.txt", ashash)
+  end
+
+  def self.quick_primes_to max
+    raise 'Can\'t go above 100M' unless max <= 100_000_000
+    primes = []
+    File.open("primes_to_100m.txt") do |file|
+      while line = file.gets
+        line.chomp.split.each do |s|
+          i = s.to_i
+          break if i > max
+          primes << i
+        end
+      end
+    end
+    primes
   end
 
   protected

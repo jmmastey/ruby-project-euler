@@ -24,29 +24,16 @@ end
 
 @chest = 0
 def chest
-  card = @chests[@chest]
-  @chest += 1
-  if @chest == @chests.length
-    @chests.shuffle!
-    @chest = 0
-  end
-  card
+  @chests[(@chest += 1) % @chests.length]
 end
 
 @chance = 0
 def chance
-  card = @chances[@chance]
-  @chance += 1
-  if @chance == @chances.length
-    @chances.shuffle!
-    @chance = 0
-  end
-  card
+  @chances[(@chance += 1) % @chances.length]
 end
 
 def roll sides
   [(rand*sides).ceil,(rand*sides).ceil]
-  #(rand*11).ceil+1
 end
 
 def put_table
@@ -64,7 +51,7 @@ end
 
 def go_to_jail
   @position = JAIL
-  @went_to_jail = true
+  @end_turn = true
 end
 
 def next_railroad
@@ -83,29 +70,32 @@ end
 
 def evaluate_position
   placename = @spaces[@position]
-  card = -1
+  card = nil
 
   # go directly to jail
-  return go_to_jail if 'G2J' == placename
+  go_to_jail if 'G2J' == placename
 
   # take cards
+  return if @end_turn
   card = chest if "CC" == placename[0,2]
   card = chance if "CH" == placename[0,2]
 
-  return if -1 == card
+  return if card.nil?
   return go_to_jail if card == JAIL
   return next_railroad if card == 'NR'
   return next_utility if card == 'NU'
 
   if card.kind_of? Integer
-    position = card
+    @position = card
   elsif card == 'M3'
     move -3
+    @end_turn = true
     evaluate_position
   end
 end
 
 def take_roll
+  return if @end_turn
   dice = roll(@sidedness)
   move dice[0]+dice[1]
   evaluate_position
@@ -114,31 +104,28 @@ def take_roll
 end
 
 def take_turn
-  @went_to_jail = false
+  @end_turn = false
   doubles = 0
   dice = take_roll
-  while dice[0] == dice[1]
+  while !@end_turn && dice[0] == dice[1]
     doubles += 1
     if 3 == doubles
-      @went_to_jail = true
+      @end_turn = true
       @position = JAIL
-      return
     end
 
     dice = take_roll
   end
 end
 
-def print_results
-  p (@hits.to_a.sort_by { |l| l[1] }).last(3).reverse
-end
-at_exit { print_results }
+at_exit { p (@hits.to_a.sort_by { |l| l[1] }).last(3).reverse }
 
-@sidedness = 6
+@sidedness = 4
+#@sidedness = 20 # D&D rules :)
 @hits = ((0..39).inject({}) { |h,i| h[i] = 0; h })
 @total = 0
 @position = 0
-@went_to_jail = false
+@end_turn = false
 
 i = 1
 while true

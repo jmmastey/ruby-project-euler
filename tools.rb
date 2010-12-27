@@ -121,6 +121,29 @@ class Fixnum
   def gcd(b)
     MathUtils.gcd(self,b)
   end
+
+  def partitions
+    _partitions(1,self)
+  end
+
+  def parts
+    return 0 if self == 0
+    return 1 if self == 1
+    sum = 0
+    1.upto self do |k|
+      sign = -1**(k+1)
+      d1 = (self - 0.5*k*(3*k-1)).to_i.parts
+      d2 = (self - 0.5*k*(3*k+1)).to_i.parts
+      sum += sign*d1*d2
+    end
+  end
+
+  def _partitions(k,n)
+    return 0 if k > n
+    return 1 if k == n
+    return _partitions(k+1,n) + _partitions(k, n-k)
+  end
+  protected :_partitions
 end
 
 class Array

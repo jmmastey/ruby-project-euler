@@ -1,22 +1,25 @@
 require 'mathn'
 
-cnv = 100
-cdigits = []
-k = 1
-while cdigits.length < cnv
-  cdigits << 1
-  cdigits << k*2
-  cdigits << 1
+fracs = [ 2, 3, 8/3, 11/4, 19/7 ]
+n = 5
 
-  k += 1
+2.upto 33 do |k|
+  kmult = 2*k
+  num = fracs[n-1].numerator*kmult + fracs[n-2].numerator
+  dem = fracs[n-1].denominator*kmult + fracs[n-2].denominator
+  fracs << num/dem
+  n+=1
+
+  num = fracs[n-1].numerator + fracs[n-2].numerator
+  dem = fracs[n-1].denominator + fracs[n-2].denominator
+  fracs << num/dem
+  n+=1
+
+  num = fracs[n-1].numerator + fracs[n-2].numerator
+  dem = fracs[n-1].denominator + fracs[n-2].denominator
+  fracs << num/dem
+  n+=1
 end
 
-rat = 3/2
-1.upto 99 do |i|
-  term = 1/(cdigits[i])
-  rat = 1/(2+term)
-  frac = 1+rat
-  p frac
-end
-
-p rat
+p fracs[99]
+p fracs[99].numerator.to_s.split(//).inject(0) { |sum,s| sum + s.to_i }

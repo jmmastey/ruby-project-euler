@@ -3,6 +3,7 @@
 # ran this overnight (6B rolls) and still no answer.
 # I should consider finding faster random numbers (maybe read a few MB from
 # /dev/urandom), since that is likely the bottleneck.
+# https://secure.wikimedia.org/wikipedia/en/wiki/Mersenne_twister
 
 def roll(n,d)
   (1..n).inject(0) { |s,i| s + (rand*d).ceil }

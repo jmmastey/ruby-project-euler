@@ -483,3 +483,30 @@ class Rational
     self.floor
   end
 end
+
+class Dice
+
+  def self.roll(n,d)
+    (1..n).inject(0) { |s,i| s + (rand*d).ceil }
+  end
+
+  @probs = {}
+  def self.probability(tgt,n,d)
+    memo_s = "#{tgt}:#{n}:#{d}"
+    return @probs[memo_s] if @probs.include? memo_s
+    return 0 if tgt <= 0
+    return 0 if n*d < tgt
+    return 1/d if n == 1
+
+    sum = 0
+    1.upto [d,tgt-1].min do |r|
+      # r is the current roll of this die, which
+      # is always 1/d
+      dp = (1/d * self.probability(tgt-r,n-1,d))
+      sum += dp
+    end
+
+    (@probs[memo_s] = sum)
+  end
+
+end

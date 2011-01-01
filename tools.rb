@@ -240,7 +240,7 @@ class Array
 
   # get sum of all elems
   def sum
-    self.inject(0) { |sum,i| sum += i; sum }
+    self.inject(0) { |sum,i| i = 0 if i.nil?; sum += i; sum }
   end
 
   # get product of all elems

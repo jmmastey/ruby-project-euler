@@ -144,6 +144,66 @@ class Fixnum
     return _partitions(k+1,n) + _partitions(k, n-k)
   end
   protected :_partitions
+
+  # square root to n digits
+  def root_digits(lim)
+    def pairs
+      s = self.to_s
+
+      if s.length.odd?
+        lead = s[0]
+        s = s[1..-1]
+      end
+
+      pairs = s.scan(/../)
+      pairs = [lead] + pairs if lead
+
+      pairs
+    end
+
+    def get_pair(pairs,n)
+      return "00" if n >= pairs.length
+      pairs[n]
+    end
+
+    def solve_digs(tgt, base)
+      1.upto 9 do |n|
+        return [n-1, "#{base}#{n-1}".to_i*(n-1)] if "#{base}#{n}".to_i * n > tgt
+      end
+      return [9,"#{base}9".to_i*9]
+    end
+
+    prs = pairs
+
+    ndigs = 0
+    idx = 0
+    res = ""
+    wk = get_pair(prs,idx).to_i
+
+    dig = (wk**0.5).to_i
+    res += dig.to_s
+    carry = (wk.to_i - dig**2).to_s
+
+    while ndigs < lim
+      idx += 1
+      if idx == prs.length
+        res += "."
+        ndigs = 0
+      end
+
+      wk = (carry + get_pair(prs,idx)).to_i
+      base = res.sub(".", "").to_i * 2
+
+      r = solve_digs(wk, base)
+      dig,sub = r[0],r[1]
+
+      res += dig.to_s
+      carry = (wk - sub).to_s
+      ndigs += 1
+    end
+
+    res
+  end
 end
 
 class Array

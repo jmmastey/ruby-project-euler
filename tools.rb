@@ -71,15 +71,26 @@ class Fixnum
   @@prime_factors = {}
 
   def prime_factors(primes = nil)
-    return {self => 1} if self.prime?
     return @@prime_factors[self] if @@prime_factors.include? self
 
+    def merge(f1, f2)
+      f = f1.clone
+      f2.each { |k,v| f[k] ||= 0; f[k] += v }
+      f
+    end
+
     primes = Sieve.get_primes_to self**0.5 unless primes
+    return {self => 1} if self.prime?(primes)
+
     target = self
     facts = {}
     k = 0
     while true
       break if target == 1
+      if @@prime_factors.include? target
+        facts = merge(facts, @@prime_factors[target])
+        break
+      end
       break if k >= primes.length
 
       pr = primes[k]

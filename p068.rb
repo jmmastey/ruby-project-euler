@@ -30,7 +30,8 @@ def solve ring
     idx = line.index nil
 
     if 0 == idx
-      return sub_in(ring,l,0,ring[:digits])
+      candidates = l == 0 ? ring[:digits] : ring[:digits].select { |x| x > ring[:lines][0][0] }
+      return sub_in(ring,l,0,candidates)
     elsif 1 == idx
       max = ring[:score] - line[0]
       digits = ring[:digits].select { |n| n < max }
@@ -44,9 +45,6 @@ def solve ring
 
   # all triplets add properly
   return [] if ring[:lines].last.sum != ring[:score]
-
-  # first triplet must be numerically lowest triplet
-  return [] unless ring[:lines][0][0] == (ring[:lines].inject([]) { |s,l| s << l[0] }).min
 
   # win!
   ring[:sum] = (ring[:lines].inject("") { |s,l| s + l.join('') }).to_i

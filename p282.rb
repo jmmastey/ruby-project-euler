@@ -1,4 +1,6 @@
 # need to calculate this over a modulo...
+# plus, a stackless version is basically necessary.
+# at least with memoization it stack overflows very quickly.
 
 @ack = { "1:1" => 3, "2:2" => 7, "3:3" => 61, }
 def ack(m, n)

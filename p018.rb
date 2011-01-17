@@ -26,4 +26,4 @@ tree.delete []
   end
 end
 
-p tree
+p tree[0][0]

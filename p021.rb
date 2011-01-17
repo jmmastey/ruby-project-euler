@@ -25,5 +25,5 @@ rangemax.downto 2 do |i|
   end
 end
 
-p friends
+#p friends
 p friends.keys.inject(0){|sum,i| sum += i}

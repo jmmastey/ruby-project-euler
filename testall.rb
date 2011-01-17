@@ -6,5 +6,5 @@
   res = `ruby #{test}`
   endt = Time.now
 
-  puts "Executed %d in %3.5fs and got %s" % [i, (endt.to_f-start.to_f), res]
+  puts "Executed %d in %.5fs and got %s" % [i, (endt.to_f-start.to_f), res]
 end

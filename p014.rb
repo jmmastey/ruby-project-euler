@@ -23,13 +23,13 @@ end
 maxlen = maxseed = 0
 chaincache = {}
 
-2.upto 1000000 do |seed|
+2.upto 1_000_000 do |seed|
   len = chain_length(seed, chaincache)
   chaincache[seed] = len
   maxlen = [maxlen,len].max
   maxseed = seed if len == maxlen
 
-  puts "#{seed} (#{maxlen})" if 0 == seed % 10000
+  #puts "#{seed} (#{maxlen})" if 0 == seed % 10000
 end
 
 puts maxseed

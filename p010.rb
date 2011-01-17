@@ -1,7 +1,14 @@
-class Fixnum
-  def prime?
-    ('1' * self.to_i) !~ /^1?$|^(11+?)\1+$/
+require 'tools'
+
+sum = 0
+File.open("primes_to_15m.txt") do |file|
+  while line = file.gets
+    line.chomp.split.each do |s|
+      i = s.to_i
+      break if i > 2_000_000
+      sum += i
+    end
   end
 end
 
-puts ((1..2000).select &:prime?).inject(0) { |sum,i| sum += i }
+p sum

@@ -1,8 +1,8 @@
 require 'tools'
 
 @lim = 10_000_000
-@primes = Sieve.quick_primes_to_15m
-@lookup = Sieve.quick_primes_to_15m(true)
+@primes = Sieve.primes_to_15m
+@lookup = Sieve.primes_to_15m(true)
 @nfactors = {}
 def nfactors i
   if !@nfactors.include? i

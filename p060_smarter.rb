@@ -23,8 +23,8 @@ def friendly_to(str1, arr)
 end
 
 lim = 10000
-primes = Sieve.get_primes_to(lim)
-@lookup = Sieve.quick_primes_to_100m true
+primes = Sieve.primes_to(lim)
+@lookup = Sieve.primes_to_100m true
 @lmax = @lookup.keys.max
 @misclookup = {}
 

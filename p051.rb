@@ -42,7 +42,7 @@ def vary_for_digit(str, d)
 end
 
 ans = {}
-primes = Sieve.get_primes_to max
+primes = Sieve.primes_to max
 primes.each do |pr|
   permutations = asterisk_permutations pr.to_s
 

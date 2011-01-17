@@ -5,7 +5,7 @@ def friendly?(str1, str2)
 end
 
 lim  = 1000
-primes = Sieve.get_primes_to lim
+primes = Sieve.primes_to lim
 
 sols = {}
 primes.each do |pr|

@@ -1,6 +1,6 @@
 require 'tools'
 
-primes = Sieve.get_primes_to 31500
+primes = Sieve.primes_to 31500
 
 max = 0
 # originally we tested from 9 digits, but because

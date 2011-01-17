@@ -5,7 +5,7 @@ lim = 1_000_000
 factors = {}
 max = 0
 maxnover = nil
-@phi = Sieve.clever_phi_to lim
+@phi = Sieve.phi_to lim
 @phi.delete 0
 
 @phi.each do |n,phi|

@@ -14,7 +14,7 @@ end
 max = 1
 cap = 1000000
 maxsol = {}
-primes = Sieve.get_primes_to 10000
+primes = Sieve.primes_to_10k
 0.upto(primes.length-1) do |i|
   maxlen = primes.length-i
   maxlen.downto max+1 do |j|

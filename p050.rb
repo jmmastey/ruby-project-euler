@@ -1,7 +1,7 @@
 
 require 'tools'
 
-primes = Sieve.get_primes_to 1000000
+primes = Sieve.primes_to_1m
 keys = primes.tohashkeys
 
 max = 500

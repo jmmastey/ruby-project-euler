@@ -25,7 +25,7 @@ def check_family(str, target)
   end
 end
 
-primes = Sieve.get_primes_to(100000)
+primes = Sieve.primes_to_100k
 primes.each do |pr|
   check_family(pr.to_s, target)
 end

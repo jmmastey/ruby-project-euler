@@ -2,7 +2,7 @@ require 'tools'
 
 nm = {}
 max = 50_000_000
-primes = Sieve.quick_primes_to(max.root(2)+1)
+primes = Sieve.primes_to(max.root(2)+1)
 
 square = []
 0.upto(primes.length-1) do |i|

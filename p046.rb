@@ -10,7 +10,7 @@ def prime_and_square(target, primes)
 end
 
 max = 10000
-primes = Sieve.get_primes_to max
+primes = Sieve.primes_to max
 
 (3..max).step(2) do |k|
   next if primes.include? k

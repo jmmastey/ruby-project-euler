@@ -7,7 +7,7 @@ require 'tools'
 lim = 100_000
 tgt = 10_000
 @idx = []
-primes = Sieve.get_primes_to lim
+primes = Sieve.primes_to lim
 
 1.upto lim do |i|
   factors = i.prime_factors(primes).keys

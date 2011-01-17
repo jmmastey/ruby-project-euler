@@ -6,7 +6,7 @@ def is_permutation?(n,phi)
 end
 
 min = 999
-phi = Sieve.quick_phi_to_10m
+phi = Sieve.phi_to_10m
 phi.each do |n,phi|
   next unless n > 1_000_000
   next unless is_permutation?(n,phi)

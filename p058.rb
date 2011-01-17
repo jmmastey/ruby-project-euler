@@ -1,6 +1,6 @@
 require 'tools'
 
-@lookup = Sieve.quick_primes_to_1m
+@lookup = Sieve.primes_to_1m
 primes = 3
 total = 5
 

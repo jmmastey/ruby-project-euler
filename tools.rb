@@ -25,7 +25,7 @@ class Fixnum
     return false if 0 != self.clever_primecheck
 
     sqrt    = self**0.5
-    primes  = Sieve.get_primes_to sqrt unless primes
+    primes  = Sieve.primes_to sqrt unless primes
     primes.each do |t|
       return true if t > sqrt
       return false if 0 == self%t
@@ -79,7 +79,7 @@ class Fixnum
       f
     end
 
-    primes = Sieve.get_primes_to self**0.5 unless primes
+    primes = Sieve.primes_to self**0.5 unless primes
     return {self => 1} if self.prime?(primes)
 
     target = self
@@ -118,7 +118,7 @@ class Fixnum
     return self - 1 if self.prime?
     return 1 if self == 1
 
-    primes = Sieve.get_primes_to(self**0.5) unless primes
+    primes = Sieve.primes_to(self**0.5) unless primes
     pf = self.prime_factors(primes)
     return pf.inject(1) do |prod, pair|
       prod *= (pair[0]-1)*pair[0]**(pair[1]-1)
@@ -365,58 +365,7 @@ class MathUtils
 end
 
 class Sieve
-  def self.get_primes_to max
-    series = (2..max).to_a
-    sqrt  = max**0.5
-
-    0.upto series.length do |k|
-      next unless series[k]
-
-      candidate = series[k]
-      wipe = (candidate**2)-2 # abuse indices. arr[n] = n+2
-      while wipe <= max
-        series[wipe] = nil
-        wipe += candidate
-      end
-    end
-
-    series.compact
-  end
-
-  def self.phi_to(max, primes = nil)
-    primes = self.get_primes_to(max/2) unless primes
-    ret = { 1 => 1 }
-
-    2.upto max do |i|
-      next if ret.include? i
-      p i if 0 == i % 1000
-
-      # phi of a prime i is i-1
-      if i.prime?
-        ret[i] = i-1
-
-      # general case, take prime factors
-      else
-        pf = i.prime_factors(primes)
-        ret[i] = pf.inject(1) do |prod, pair|
-          prod *= (pair[0]-1)*pair[0]**(pair[1]-1)
-        end
-      end
-
-      # power of prime, p**a - p**(a-1)
-      pow = 2
-      ipow = i**pow
-      while ipow < max
-        ret[ipow] = ipow*(1-(1/i))
-        pow += 1
-        ipow = i**pow
-      end
-    end
-
-    ret
-  end
-
-  def self.clever_phi_to max
+  def self.phi_to max
     phi = { 0 => 0, 1 => 1 }
     nonce = { 0 => nil, 1 => nil }
 
@@ -436,23 +385,43 @@ class Sieve
     phi
   end
 
-  def self.quick_phi_to_1m
+  def self.phi_to_1m
     self.philist("phi_to_1m.txt")
   end
 
-  def self.quick_phi_to_10m
+  def self.phi_to_10m
     self.philist("phi_to_10m.txt")
   end
 
-  def self.quick_primes_to_1m(ashash = false)
+  def self.primes_to(max, ashash = false)
+    return self.quick_primes_to(max, ashash) if max > 1_000_000
+
+    series = (2..max).to_a
+    sqrt  = max**0.5
+
+    0.upto series.length do |k|
+      next unless series[k]
+
+      candidate = series[k]
+      wipe = (candidate**2)-2 # abuse indices. arr[n] = n+2
+      while wipe <= max
+        series[wipe] = nil
+        wipe += candidate
+      end
+    end
+
+    series.compact
+  end
+
+  def self.primes_to_1m(ashash = false)
     self.primelist("primes_to_1m.txt", ashash)
   end
 
-  def self.quick_primes_to_15m(ashash = false)
+  def self.primes_to_15m(ashash = false)
     self.primelist("primes_to_15m.txt", ashash)
   end
 
-  def self.quick_primes_to_100m(ashash = false)
+  def self.primes_to_100m(ashash = false)
     self.primelist("primes_to_100m.txt", ashash)
   end
 
@@ -469,6 +438,17 @@ class Sieve
       end
     end
     primes
+  end
+
+  def self.method_missing(m, *args, &block)
+    if /^primes_to_[0-9_km]+$/.match m
+      n = m.to_s.sub('primes_to_', '').sub('k','000').sub('m','000000').to_i
+      return self.send(:primes_to, *([n] + args))
+    elsif /^phi_to[0-9_km]+$/.match m
+      n = m.to_s.sub('phi_to_', '').sub('k','000').sub('m','000000').to_i
+      return self.send(:phi_to, *([n] + args))
+    end
+    raise "Method missing failed for #{m}"
   end
 
   protected

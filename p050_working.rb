@@ -8,8 +8,8 @@ require 'tools'
 # would be to use a smarter way to get the sum
 
 lim = 1_000_000
-@primes = Sieve.get_primes_to(lim/2)
-@lookup = Sieve.get_primes_to(lim).tohashkeys
+@primes = Sieve.primes_to(lim/2)
+@lookup = Sieve.primes_to(lim).tohashkeys
 tlen = @primes.length
 max = 0
 

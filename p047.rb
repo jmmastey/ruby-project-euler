@@ -3,7 +3,7 @@ require 'tools'
 targetlen = 4
 i = 1
 lim = 1000000
-primes = Sieve.get_primes_to lim
+primes = Sieve.primes_to lim
 ph = primes.tohashkeys
 puts "Getting started now"
 

@@ -9,7 +9,7 @@ def largest_prime_factor max
     next unless max%i == 0
 
     # test primality
-    puts "found candidate #{i.to_i}\n"
+    #puts "found candidate #{i.to_i}\n"
     lgst = i if is_prime? i
   end
 

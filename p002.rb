@@ -7,14 +7,14 @@ def sum_even_fibbs max
 
     break if b >= max
 
-    print " #{b}"
+    #print " #{b}"
     sum += b if (b%2 == 0)
   end
 
-  puts "\n"
+  #puts "\n"
   sum
 end
 
 
-max = (!ARGV.empty? && ARGV[0].to_i) || 4000000
+max = (!ARGV.empty? && ARGV[0].to_i) || 4_000_000
 puts sum_even_fibbs max

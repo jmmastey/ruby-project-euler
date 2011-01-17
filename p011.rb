@@ -38,7 +38,7 @@ max = 0
     diag_r = a[i][j]*a[i-1][j-1]*a[i-2][j-2]*a[i-3][j-3] unless (j < 3 || i+3 > xsentry)
 
     max = [max,across,down,diag_l,diag_r].max
-    puts "#{i},#{j}: #{max} (#{a[i][j]}) (#{across}, #{down}, #{diag_l}, #{diag_r})"
+    #puts "#{i},#{j}: #{max} (#{a[i][j]}) (#{across}, #{down}, #{diag_l}, #{diag_r})"
   end
 end
 

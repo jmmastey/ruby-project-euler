@@ -394,7 +394,7 @@ class Sieve
   end
 
   def self.primes_to(max, ashash = false)
-    return self.quick_primes_to(max, ashash) if max > 1_000_000
+    return self.quick_primes_to max if max > 1_000_000
 
     series = (2..max).to_a
     sqrt  = max**0.5

@@ -10,7 +10,7 @@ while divisors < div_limit
     divisors += 2 if (0 == triangle % divisor)
   end
 
-  puts "#{triangle}: #{divisors}" if divisors > 300
+  #puts "#{triangle}: #{divisors}" if divisors > 300
 end
 
 puts triangle

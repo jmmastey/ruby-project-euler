@@ -28,4 +28,4 @@ max = 0
   max = [curr,max].max
 end
 
-puts "max is #{max}"
+puts max

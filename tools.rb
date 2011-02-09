@@ -80,7 +80,10 @@ class Fixnum
     end
 
     primes = Sieve.primes_to self**0.5 unless primes
-    return {self => 1} if self.prime?(primes)
+    if self.prime?(primes)
+      @@prime_factors[self] = {self => 1}
+      return @@prime_factors[self]
+    end
 
     target = self
     facts = {}
@@ -425,7 +428,9 @@ class Sieve
     self.primelist("primes_to_100m.txt", ashash)
   end
 
-  def self.quick_primes_to max
+  def self.quick_primes_to(max, ashash = false)
+    return self.hash_primes_to(max) if ashash
+
     raise 'Can\'t go above 100M' unless max <= 100_000_000
     primes = []
     File.open("primes_to_100m.txt") do |file|
@@ -434,6 +439,21 @@ class Sieve
           i = s.to_i
           break if i > max
           primes << i
+        end
+      end
+    end
+    primes
+  end
+
+  def self.hash_primes_to max
+    raise 'Can\'t go above 100M' unless max <= 100_000_000
+    primes = {}
+    File.open("primes_to_100m.txt") do |file|
+      while line = file.gets
+        line.chomp.split.each do |s|
+          i = s.to_i
+          break if i > max
+          primes[i] = nil
         end
       end
     end

@@ -471,6 +471,20 @@ class Sieve
     raise "Method missing failed for #{m}"
   end
 
+  def self.factors_to(max)
+    factors = (1..max).inject({}) { |h,i| h[i] = [1]; h }
+    factors[1].delete 1
+
+    2.upto max do |i|
+      lim = max/i
+      2.upto lim do |j|
+        factors[i*j] << i
+      end
+    end
+
+    factors
+  end
+
   protected
   def self.primelist(file, hash)
     return self.primelisthash(file) if hash

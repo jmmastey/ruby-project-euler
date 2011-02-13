@@ -8,4 +8,4 @@ words.each do |word|
 end
 
 pallindromes = idx.select { |k,v| v.length >= 2 }
-p pallindromes.length
+p pallindromes

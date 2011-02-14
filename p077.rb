@@ -1,20 +1,16 @@
 require 'tools'
 
-primes = Sieve.primes_to_1000
-p primes
-res = {}
-lim = 40_000_000
-lim = 10
+primes = Sieve.primes_to_1k
+lim = 5000
 
-1.upto lim do |i|
-  sum = 0
-  primes.each do |pr|
-    break if pr > i/2
-    j = i-pr
-    p j
-    sum += res[j] + (primes.include?(j) ? 1 : 0)
-    p " #{sum}"
+tgt = 1
+while true
+  ways = [1] + [0]*tgt
+  primes.each do |i|
+    (i).upto(tgt) { |j| ways[j] += ways[j-i] }
   end
-  res[i] = sum
-  p res
+  break if ways[tgt] > lim
+  tgt += 1
 end
+
+p tgt
